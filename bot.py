@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver.common.by import By 
+from selenium.webdriver import ActionChains
 
 import os 
 import time
@@ -7,8 +9,8 @@ import random
 
 
 class IgBot:
-    hashtag_list = ['augmented', 'augmented_reality', 'augmentedreality']
-    comment_list = ['This is awesome!', 'Augmented Reality is Future.', 'This is literally cool, check our page as well..','You guys are doing great, keep it up','Future is coming with augmented reality.','This is what we like to see.','Our page is as cool as yours, check it out','Keep it up good work.']
+    hashtag_list = ['augmented', 'augmented_reality', 'augmentedreality','ar','augmentedrealityart','augmentedrealityapplicationtesting','technology','virtualreality','virtualshow','business','businessfuture','robotics','robot','robots','industrialdesign','industrialarchitecture','informationtechnology','leadingtechnology']
+    comment_list = ['This is awesome! :)', 'Augmented Reality is the Future, check our page too.', 'This is literally cool, check our page as well..','This is great post! Keep it up','Future is coming with augmented reality, just keep in mind :)','This is what we like to see :)','Our page is as cool as yours, check it out','Keep it up good work.', 'Thank you for this great post','This is amazing post :0','This post made our day, thanks a lot','Thanks a lot for the post','We really like your page, keep it up good work','You are sharing amazing post, appreciate it','We like these kind of post :)','Like your page and posts!','Like this post a lot','Your page is amazing, good work!','Love your posts and page as well, good work','Have a great day and keep it up good work','Interesting with technology? just bare with us, like your posts as well','Hope you are doing like in this post, have a great day','Life is great, thank you for this inspirational post','Inspiration does not come easily right? check our page as well','Love what you are doing, well done']
 
     tag = 0
     followed = 0
@@ -44,6 +46,7 @@ class IgBot:
 
     def login(self):
         self.driver.get('https://www.instagram.com/')
+        
 
         self.driver.implicitly_wait(4)
 
@@ -83,13 +86,16 @@ class IgBot:
             starter_thumb = self.driver.find_element_by_xpath('/html/body/div[1]/section/main/article/div[2]/div/div[{}]/div[{}]'.format(start_row,start_pic_row)).click()
                                                              
             while(self.like_number != 0):
-                time.sleep(random.randint(1,3))
+                time.sleep(random.randint(2,10))
                 button_click = 0
 
                 next_btn = self.driver.find_element_by_xpath('/html/body/div[4]/div[1]/div/div/a[2]')
                 btn = self.driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/div[3]/section[1]/span[1]/button/div/span') 
                 aria_label = btn.find_element_by_tag_name('svg').get_attribute("aria-label")
-                text_area = self.driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/div[3]/section[3]/div/form/textarea')
+                # text_area3 = self.driver.find_element(By.XPATH,'/html/body/div[4]/div[2]/div/article/div[3]/section[3]/div/form/textarea')
+                # text_area = self.driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/div[3]/section[3]/div/form/textarea')
+                # text_area2 = self.driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/div[3]/section[3]/div/form').find_element_by_tag_name('textarea')
+                
                 submit_btn = self.driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/div[3]/section[3]/div/form/button')
                 follow_button = self.driver.find_element_by_xpath('/html/body/div[4]/div[2]/div/article/header/div[2]/div[1]/div[2]/button')
 
@@ -101,23 +107,36 @@ class IgBot:
                     btn.click()
                     self.likes += 1
                     self.like_number -= 1
-                    time.sleep(random.randint(2,6))
+                    time.sleep(random.randint(2,10))
                     if comment_decision:
-                        text_area.click()
-                        time.sleep(random.randint(2,4))
-                        text_area.send_keys(self.comment_list[random.randint(0, len(self.comment_list) - 1 )])
-
-                        time.sleep(random.randint(2,4))
+                        # text_area3.click()
+                        print('comment try')
+                        time.sleep(random.randint(2,10))
+                        comment_text = self.comment_list[random.randint(0, len(self.comment_list) - 1 )]
+                        self.driver.find_element(By.XPATH,'/html/body/div[4]/div[2]/div/article/div[3]/section[3]/div/form/textarea').click()
+                        time.sleep(random.randint(2,10))
+                        textarea1 = self.driver.find_element(By.XPATH,'/html/body/div[4]/div[2]/div/article/div[3]/section[3]/div/form/textarea')
+                        for character in comment_text:
+                            actions = ActionChains(self.driver)
+                            actions.move_to_element(textarea1)
+                            actions.send_keys(character)
+                            actions.perform()
+                            time.sleep(random.uniform(0.2,0.5))                            
+                        # text_area3.send_keys(self.comment_list[random.randint(0, len(self.comment_list) - 1 )])
+                        time.sleep(random.randint(2,10))
                         submit_btn.click()
                         self.comments += 1
                     if follow_button.text != 'Following' and follow_decision:
+                        time.sleep(random.randint(1,10))
                         follow_button.click()
                         self.followed +=1
-                        time.sleep(random.randint(2,4))
-                while(button_click < random.randint(1,4)):
+                        time.sleep(random.randint(2,10))
+                while(button_click < random.randint(1,10)):
+                    time.sleep(random.randint(1,6))
                     next_btn.click()
                     button_click += 1
-        
+
+            time.sleep(random.randint(3, 12))
 
         print('Tag {} photos.'.format(self.tag))
         print('Followed {} accounts.'.format(self.followed))
